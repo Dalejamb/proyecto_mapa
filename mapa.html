@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Demo Leaflet + Bootstrap</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <style>
+    body { background:#f8f9fa; }
+    #map { height: 600px; min-height: 300px; width:100%; border: 1px solid #ddd; border-radius: 6px; }
+    .controls { margin-bottom: 10px; }
+    .card-title { font-size: 1.02rem; }
+    @media (max-width:767px) { #map { height: 420px; } }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1 class="mb-3">Mapa interactivo con Leaflet</h1>
+
+    <div class="row g-3">
+      <div class="col-md-8">
+        <div class="controls d-flex align-items-center">
+          <button id="btnBog" class="btn btn-primary btn-sm me-2">Centrar Bogotá</button>
+          <button id="btnLocate" class="btn btn-outline-primary btn-sm me-2">Localizarme</button>
+          <span id="coordBadge" class="badge bg-secondary">Lat: — , Lng: —</span>
+        </div>
+        <div id="map"></div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">¿Por qué Leaflet?</h5>
+            <p class="card-text mb-0">Ligero, fácil de aprender, open-source y con muchos plugins. Ideal para demos, trabajos y proyectos académicos.</p>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Requisitos básicos</h5>
+            <p class="card-text mb-0">Conocimientos básicos de HTML y JavaScript. Un div con id para el mapa y CSS que le dé altura.</p>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Funciones clave mostradas</h5>
+            <p class="card-text mb-0">Inicializar mapa, capas de tiles (OpenStreetMap), marcador, círculo, polígono, evento clic y geolocalización.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Notas prácticas</h5>
+            <p class="card-text mb-0">Geolocalización funciona solo en HTTPS o localhost. Atribuye OpenStreetMap si usas sus tiles.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const map = L.map('map').setView([4.711, -74.0721], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    const marker = L.marker([4.711, -74.0721]).addTo(map).bindPopup('Bogotá, D.C.').openPopup();
+
+    const circle = L.circle([4.712, -74.075], { radius: 300, fillOpacity: 0.2 }).addTo(map).bindPopup('Radio 300 m');
+
+    const polygon = L.polygon([[4.715, -74.08], [4.71, -74.07], [4.706, -74.075]]).addTo(map).bindPopup('Polígono ejemplo');
+
+    map.on('click', function(e){
+      const lat = e.latlng.lat.toFixed(5);
+      const lng = e.latlng.lng.toFixed(5);
+      L.popup().setLatLng(e.latlng).setContent('Coordenadas: ' + lat + ', ' + lng).openOn(map);
+      document.getElementById('coordBadge').textContent = 'Lat: ' + lat + ' , Lng: ' + lng;
+    });
+
+    document.getElementById('btnBog').addEventListener('click', function(){
+      map.setView([4.711, -74.0721], 13);
+    });
+
+    document.getElementById('btnLocate').addEventListener('click', function(){
+      map.locate({ setView: true, maxZoom: 16 });
+    });
+
+    map.on('locationfound', function(e){
+      const radius = e.accuracy;
+      L.marker(e.latlng).addTo(map).bindPopup('Estás aquí').openPopup();
+      L.circle(e.latlng, radius).addTo(map);
+      document.getElementById('coordBadge').textContent = 'Lat: ' + e.latlng.lat.toFixed(5) + ' , Lng: ' + e.latlng.lng.toFixed(5);
+    });
+
+    map.on('locationerror', function(){
+      alert('No fue posible obtener la ubicación. Revisa permisos o usa HTTPS.');
+    });
+  </script>
+</body>
+</html>
