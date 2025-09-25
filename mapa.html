@@ -1,18 +1,13 @@
-<!--Alison Julieth Diaz Espitia
-Cristian Daniel Feo Pararroyo
-Danna Alejandra Molina Beltrán
-Joan Daniel Vargas Avila
--->
-
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Demo Leaflet + Bootstrap</title>
+  <title>Explorando Bogotá con Leaflet</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
   <style>
     body { background:#f8f9fa; }
@@ -20,72 +15,163 @@ Joan Daniel Vargas Avila
     .controls { margin-bottom: 10px; }
     .card-title { font-size: 1.02rem; }
     @media (max-width:767px) { #map { height: 420px; } }
+    .list-group-item { cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="container py-4">
-    <h1 class="mb-3">Mapa interactivo con Leaflet</h1>
-    <h3 class="mb-1">Realizado por: </h3>
-    <p class="mb-3">Alison Julieth Diaz Espitia, Cristian Daniel Feo Pararroyo, Danna Alejandra Molina Beltrán, Joan Daniel Vargas Avila</p>
+    <h1 class="mb-3">🌍 Mapa interactivo con Leaflet</h1>
+    <h5 class="mb-4 text-muted">Ejemplo de uso de la API de Leaflet + OpenStreetMap</h5>
+
     <div class="row g-3">
+      <!-- MAPA -->
       <div class="col-md-8">
-        <div class="controls d-flex align-items-center">
-          <button id="btnBog" class="btn btn-primary btn-sm me-2">Centrar Bogotá</button>
-          <button id="btnLocate" class="btn btn-outline-primary btn-sm me-2">Localizarme</button>
-          <span id="coordBadge" class="badge bg-secondary">Lat: — , Lng: —</span>
+        <div class="controls d-flex align-items-center mb-2">
+          <button id="btnBog" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-geo"></i> Centrar Bogotá
+          </button>
+          <button id="btnLocate" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-geo-alt"></i> Localizarme
+          </button>
         </div>
+
         <div id="map"></div>
+
+        <!-- Coordenadas -->
+        <div class="card mt-3">
+          <div class="card-body py-2">
+            <h6 class="card-title mb-1">📍 Coordenadas actuales</h6>
+            <p id="coordBadge" class="mb-0 text-secondary">Lat: — , Lng: —</p>
+          </div>
+        </div>
       </div>
 
+      <!-- PANEL LATERAL -->
       <div class="col-md-4">
+        <!-- Lugares turísticos -->
         <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">¿Por qué Leaflet?</h5>
-            <p class="card-text mb-0">Ligero, fácil de aprender, open-source y con muchos plugins. Ideal para demos, trabajos y proyectos académicos.</p>
-          </div>
+          <div class="card-header">📌 Lugares turísticos</div>
+          <ul class="list-group list-group-flush" id="listaLugares">
+            <li class="list-group-item lugar" data-lat="4.605" data-lng="-74.056">Monserrate</li>
+            <li class="list-group-item lugar" data-lat="4.601" data-lng="-74.072">Museo del Oro</li>
+            <li class="list-group-item lugar" data-lat="4.598" data-lng="-74.077">Plaza de Bolívar</li>
+            <li class="list-group-item lugar" data-lat="4.658" data-lng="-74.094">Parque Simón Bolívar</li>
+          </ul>
         </div>
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Requisitos básicos</h5>
-            <p class="card-text mb-0">Conocimientos básicos de HTML y JavaScript. Un div con id para el mapa y CSS que le dé altura.</p>
+        <!-- Acordeón informativo -->
+        <div class="accordion" id="accordionInfo">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#whyLeaflet">
+                🤔 ¿Por qué Leaflet?
+              </button>
+            </h2>
+            <div id="whyLeaflet" class="accordion-collapse collapse show" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Ligero, fácil de aprender, open-source y con muchos plugins. Ideal para demos, trabajos y proyectos académicos.
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Funciones clave mostradas</h5>
-            <p class="card-text mb-0">Inicializar mapa, capas de tiles (OpenStreetMap), marcador, círculo, polígono, evento clic y geolocalización.</p>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#requirements">
+                🛠️ Requisitos básicos
+              </button>
+            </h2>
+            <div id="requirements" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Conocimientos básicos de HTML y JavaScript. Un <code>&lt;div&gt;</code> con id para el mapa y CSS que le dé altura.
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Notas prácticas</h5>
-            <p class="card-text mb-0">Geolocalización funciona solo en HTTPS o localhost. Atribuye OpenStreetMap si usas sus tiles.</p>
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features">
+                ⚙️ Funciones clave
+              </button>
+            </h2>
+            <div id="features" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Inicializar mapa, capas de tiles, marcador, círculo, polígono, evento clic, geolocalización, rutas y control de capas.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notes">
+                📝 Notas prácticas
+              </button>
+            </h2>
+            <div id="notes" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Geolocalización funciona solo en HTTPS o localhost. Recuerda atribuir OpenStreetMap si usas sus tiles.
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // ====== Inicialización del mapa ======
     const map = L.map('map').setView([4.711, -74.0721], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
+    // Capas base
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors', maxZoom: 19
     }).addTo(map);
 
-    const marker = L.marker([4.711, -74.0721]).addTo(map).bindPopup('Bogotá, D.C.').openPopup();
+    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenTopoMap'
+    });
 
-    const circle = L.circle([4.712, -74.075], { radius: 300, fillOpacity: 0.2 }).addTo(map).bindPopup('Radio 300 m');
+    const sat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution: '© Google Maps'
+    });
 
-    const polygon = L.polygon([[4.715, -74.08], [4.71, -74.07], [4.706, -74.075]]).addTo(map).bindPopup('Polígono ejemplo');
+    // Control de capas
+    L.control.layers({ "OSM": osm, "Topográfico": topo, "Satélite": sat }).addTo(map);
 
+    // Marcador principal
+    const marker = L.marker([4.711, -74.0721]).addTo(map).bindPopup('Bogotá, D.C.');
+
+    // Ruta de ejemplo
+    const ruta = L.polyline([[4.598, -74.077], [4.605, -74.056]], { color: 'red' })
+      .addTo(map).bindPopup("Ruta Plaza de Bolívar → Monserrate");
+
+    // ====== Lugares turísticos ======
+    const lugares = {
+      "Monserrate": [4.605, -74.056],
+      "Museo del Oro": [4.601, -74.072],
+      "Plaza de Bolívar": [4.598, -74.077],
+      "Parque Simón Bolívar": [4.658, -74.094]
+    };
+
+    for (let nombre in lugares) {
+      const coords = lugares[nombre];
+      L.marker(coords).addTo(map).bindPopup(nombre).bindTooltip(nombre);
+    }
+
+    // Click en lista lateral
+    document.querySelectorAll(".lugar").forEach(item => {
+      item.addEventListener("click", () => {
+        const lat = parseFloat(item.getAttribute("data-lat"));
+        const lng = parseFloat(item.getAttribute("data-lng"));
+        map.setView([lat, lng], 16);
+      });
+    });
+
+    // ====== Eventos del mapa ======
     map.on('click', function(e){
       const lat = e.latlng.lat.toFixed(5);
       const lng = e.latlng.lng.toFixed(5);
@@ -97,20 +183,30 @@ Joan Daniel Vargas Avila
       map.setView([4.711, -74.0721], 13);
     });
 
+    // ====== Geolocalización ======
     document.getElementById('btnLocate').addEventListener('click', function(){
       map.locate({ setView: true, maxZoom: 16 });
     });
 
+    let userMarker, userCircle;
+
     map.on('locationfound', function(e){
-      const radius = e.accuracy;
-      L.marker(e.latlng).addTo(map).bindPopup('Estás aquí').openPopup();
-      L.circle(e.latlng, radius).addTo(map);
-      document.getElementById('coordBadge').textContent = 'Lat: ' + e.latlng.lat.toFixed(5) + ' , Lng: ' + e.latlng.lng.toFixed(5);
+      if (userMarker) { map.removeLayer(userMarker); }
+      if (userCircle) { map.removeLayer(userCircle); }
+
+      userMarker = L.marker(e.latlng).addTo(map).bindPopup('Estás aquí').openPopup();
+      userCircle = L.circle(e.latlng, e.accuracy).addTo(map);
+
+      document.getElementById('coordBadge').textContent = 
+        'Lat: ' + e.latlng.lat.toFixed(5) + ' , Lng: ' + e.latlng.lng.toFixed(5);
     });
 
     map.on('locationerror', function(){
       alert('No fue posible obtener la ubicación. Revisa permisos o usa HTTPS.');
     });
+
+    // Escala
+    L.control.scale({ metric: true, imperial: false }).addTo(map);
   </script>
 </body>
 </html>
