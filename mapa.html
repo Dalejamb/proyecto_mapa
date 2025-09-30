@@ -64,21 +64,27 @@ Joan Daniel Vargas Avila -->
           </ul>
         </div>
 
+
         <!-- Acordeón informativo -->
         <div class="accordion" id="accordionInfo">
+
+          <!-- ¿Qué es Leaflet? -->
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#whyLeaflet">
-                🤔 ¿Por qué Leaflet?
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#aboutLeaflet">
+                🌱 ¿Qué es Leaflet?
               </button>
             </h2>
-            <div id="whyLeaflet" class="accordion-collapse collapse show" data-bs-parent="#accordionInfo">
+            <div id="aboutLeaflet" class="accordion-collapse collapse show" data-bs-parent="#accordionInfo">
               <div class="accordion-body">
-                Ligero, fácil de aprender, open-source y con muchos plugins. Ideal para demos, trabajos y proyectos académicos.
+                Leaflet es una librería <strong>open-source</strong> de JavaScript para crear mapas interactivos en la web.  
+                Es <em>ligera</em>, <em>fácil de aprender</em> y compatible con múltiples proveedores de mapas como 
+                <code>OpenStreetMap</code>, <code>Google Maps</code> o <code>Topographic Maps</code>.
               </div>
             </div>
           </div>
 
+          <!-- Requisitos -->
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#requirements">
@@ -87,24 +93,35 @@ Joan Daniel Vargas Avila -->
             </h2>
             <div id="requirements" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
               <div class="accordion-body">
-                Conocimientos básicos de HTML y JavaScript. Un <code>&lt;div&gt;</code> con id para el mapa y CSS que le dé altura.
+                - Conocimientos básicos de <strong>HTML, CSS y JavaScript</strong><br>
+                - Un <code>&lt;div id="map"&gt;</code> con altura definida en CSS<br>
+                - Incluir <code>leaflet.css</code> y <code>leaflet.js</code> en tu página
               </div>
             </div>
           </div>
 
+          <!-- Funciones clave -->
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features">
-                ⚙️ Funciones clave
+                ⚙️ Funciones clave del ejemplo
               </button>
             </h2>
             <div id="features" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
               <div class="accordion-body">
-                Inicializar mapa, capas de tiles, marcador, círculo, polígono, evento clic, geolocalización, rutas y control de capas.
+                <ul>
+                  <li>Inicializar mapa con capas (OSM, topográfico, satélite)</li>
+                  <li>Añadir <strong>marcadores</strong> y <strong>rutas</strong></li>
+                  <li>Panel lateral con <strong>lugares turísticos</strong></li>
+                  <li>Eventos de clic para mostrar coordenadas</li>
+                  <li>Geolocalización del usuario</li>
+                  <li>Controles extra: capas y escala</li>
+                </ul>
               </div>
             </div>
           </div>
 
+          <!-- Notas prácticas -->
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notes">
@@ -113,11 +130,31 @@ Joan Daniel Vargas Avila -->
             </h2>
             <div id="notes" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
               <div class="accordion-body">
-                Geolocalización funciona solo en HTTPS o localhost. Recuerda atribuir OpenStreetMap si usas sus tiles.
+                - La <strong>geolocalización</strong> solo funciona en <em>HTTPS</em> o <em>localhost</em><br>
+                - Recuerda atribuir a <strong>OpenStreetMap</strong> al usar sus tiles<br>
+                - Leaflet es ideal para <em>demos, proyectos académicos y prototipos rápidos</em>
               </div>
             </div>
           </div>
+
+          <!-- Conclusiones -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#conclusions">
+                 Conclusiones
+              </button>
+            </h2>
+            <div id="conclusions" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Leaflet permite crear <strong>mapas interactivos</strong> de forma sencilla y flexible.  
+                Gracias a su comunidad y compatibilidad con proveedores de mapas, se convierte en una herramienta 
+                perfecta para <em>aplicaciones web modernas</em>.
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
   </div>
