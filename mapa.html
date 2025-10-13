@@ -1,17 +1,18 @@
-<!--Alison Julieth Diaz Espitia
-Cristian Daniel Feo Pararroyo
-Danna Alejandra Molina Beltrán
--->
+<!--Alison Julieth Diaz Espitia 
+Cristian Daniel Feo Pararroyo 
+Danna Alejandra Molina Beltrán 
+Joan Daniel Vargas Avila -->
 
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Demo Leaflet + Bootstrap</title>
+  <title>Explorando Bogotá con Leaflet</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
   <style>
     body { background:#f8f9fa; }
@@ -19,72 +20,388 @@ Danna Alejandra Molina Beltrán
     .controls { margin-bottom: 10px; }
     .card-title { font-size: 1.02rem; }
     @media (max-width:767px) { #map { height: 420px; } }
+    .list-group-item { cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="container py-4">
-    <h1 class="mb-3">Mapa interactivo con Leaflet</h1>
-    <h3 class="mb-1">Realizado por: </h3>
-    <p class="mb-3">Alison Julieth Diaz Espitia, Cristian Daniel Feo Pararroyo, Danna Alejandra Molina Beltrán, </p>
-    <div class="row g-3">
+    <h1 class="mb-3">🌍 Mapa interactivo con Leaflet</h1>
+    <h5 class="mb-4 text-muted">Ejemplo de uso de la API de Leaflet + OpenStreetMap</h5>
+	<div class="accordion mt-3" id="accordionIntegrantes"> 
+		<div class="accordion-item"> 
+		<h2 class="accordion-header" id="headingIntegrantes"> 
+			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegrantes" aria-expanded="true" aria-controls="collapseIntegrantes"> INTEGRANTES: </button> 
+		</h2> 
+		<div id="collapseIntegrantes" class="accordion-collapse collapse show" aria-labelledby="headingIntegrantes" data-bs-parent="#accordionIntegrantes"> 
+			<div class="accordion-body"> 
+			    <ul class="mb-0"> 
+				<li><strong>Alison Julieth Díaz Espitia</strong></li> 
+				<li><strong>Cristian Daniel Feo Pararroyo</strong></li> 
+				<li><strong>Danna Alejandra Molina Beltrán</strong></li> 
+				<li><strong>Joan Daniel Vargas Ávila</strong></li> </ul> 
+			</div> 
+		</div> 
+		</div> 
+	</div> 
+	<div class="row g-3">
+      <!-- MAPA -->
       <div class="col-md-8">
-        <div class="controls d-flex align-items-center">
-          <button id="btnBog" class="btn btn-primary btn-sm me-2">Centrar Bogotá</button>
-          <button id="btnLocate" class="btn btn-outline-primary btn-sm me-2">Localizarme</button>
-          <span id="coordBadge" class="badge bg-secondary">Lat: — , Lng: —</span>
+        <div class="controls d-flex align-items-center mb-2">
+          <button id="btnBog" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-geo"></i> Centrar Bogotá
+          </button>
+          <button id="btnLocate" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-geo-alt"></i> Localizarme
+          </button>
         </div>
+
         <div id="map"></div>
+
+        <!-- Coordenadas -->
+        <div class="card mt-3">
+          <div class="card-body py-2">
+            <h6 class="card-title mb-1">📍 Coordenadas actuales</h6>
+            <p id="coordBadge" class="mb-0 text-secondary">Lat: — , Lng: —</p>
+          </div>
+        </div>
+	<!-- Lugares turísticos -->
+        <div class="card mt-3">
+	<div class="card mb-3">
+          <div class="card-header">📌 Lugares turísticos</div>
+          <ul class="list-group list-group-flush" id="listaLugares">
+            <li class="list-group-item lugar" data-lat="4.605" data-lng="-74.056">Monserrate</li>
+            <li class="list-group-item lugar" data-lat="4.601" data-lng="-74.072">Museo del Oro</li>
+            <li class="list-group-item lugar" data-lat="4.598" data-lng="-74.077">Plaza de Bolívar</li>
+            <li class="list-group-item lugar" data-lat="4.658" data-lng="-74.094">Parque Simón Bolívar</li>
+          </ul>
+        </div>
       </div>
+</div>
 
+      <!-- PANEL LATERAL -->
       <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">¿Por qué Leaflet?</h5>
-            <p class="card-text mb-0">Ligero, fácil de aprender, open-source y con muchos plugins. Ideal para demos, trabajos y proyectos académicos.</p>
+
+
+
+        <!-- Acordeón informativo -->
+        <div class="accordion" id="accordionInfo">
+
+          <!-- ¿Qué es Leaflet? -->
+          <div class="accordion mt-3">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#aboutLeaflet">
+                🌱 ¿Qué es Leaflet?
+              </button>
+            </h2>
+            <div id="aboutLeaflet" class="accordion-collapse collapse show" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Leaflet es una librería <strong>open-source</strong> de JavaScript para crear mapas interactivos en la web.  
+                Es <em>ligera</em>, <em>fácil de aprender</em> y compatible con múltiples proveedores de mapas como 
+                <code>OpenStreetMap</code>, <code>Google Maps</code> o <code>Topographic Maps</code>.
+              </div>
+            </div>
           </div>
+
+          <!-- Requisitos -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#requirements">
+                🛠️ Requisitos básicos
+              </button>
+            </h2>
+            <div id="requirements" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                - Conocimientos básicos de <strong>HTML, CSS y JavaScript</strong><br>
+                - Un <code>&lt;div id="map"&gt;</code> con altura definida en CSS<br>
+                - Incluir <code>leaflet.css</code> y <code>leaflet.js</code> en tu página
+              </div>
+            </div>
+          </div>
+
+          <!-- Funciones clave -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#features">
+                ⚙️ Funciones clave del ejemplo
+              </button>
+            </h2>
+            <div id="features" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                <ul>
+                  <li>Inicializar mapa con capas (OSM, topográfico, satélite)</li>
+                  <li>Añadir <strong>marcadores</strong> y <strong>rutas</strong></li>
+                  <li>Panel lateral con <strong>lugares turísticos</strong></li>
+                  <li>Eventos de clic para mostrar coordenadas</li>
+                  <li>Geolocalización del usuario</li>
+                  <li>Controles extra: capas y escala</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Características -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#characteristics">
+                ✨ Características principales
+              </button>
+            </h2>
+            <div id="characteristics" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                <ul>
+                  <li>Ligero y rápido (pesa alrededor de 40 KB).</li>
+                  <li>Compatible con dispositivos móviles y pantallas táctiles.</li>
+                  <li>Sistema de <strong>capas</strong> (mapas base + elementos superpuestos).</li>
+                  <li>Amplia variedad de <strong>plugins</strong> desarrollados por la comunidad.</li>
+                  <li>Altamente <strong>personalizable</strong> (estilos, íconos, popups, polígonos).</li>
+                  <li><strong>Código abierto</strong> y gratuito, con integración a OpenStreetMap.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+	  <!--Marcadores -->
+<div class="accordion mt-0" id="infoMarcadores"> 
+  <div class="accordion-item"> 
+    <h2 class="accordion-header" id="headingFunciones"> 
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFunciones" aria-expanded="false" aria-controls="collapseFunciones"> 🔑 Funciones principales de los Marcadores </button> 
+    </h2> 
+    <div id="collapseFunciones" class="accordion-collapse collapse" aria-labelledby="headingFunciones" data-bs-parent="#funcionesMarcadores"> 
+      <div class="accordion-body"> 
+        <p>Estas son las funciones de <strong>Leaflet</strong> utilizadas para crear e interactuar con los marcadores del mapa.</p> 
+        <div class="accordion" id="subFuncionesMarcadores"> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="markerHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#markerCollapse" aria-expanded="false" aria-controls="markerCollapse"> 📍 L.marker(latLng, opciones) </button> 
+            </h2> 
+            <div id="markerCollapse" class="accordion-collapse collapse" aria-labelledby="markerHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Crea un nuevo marcador en la posición indicada por las coordenadas <code>[lat, lng]</code>.<br>
+                <strong>Recibe:</strong> las coordenadas y parámetros opcionales de configuración (por ejemplo, ícono o título).<br>
+                <strong>Devuelve:</strong> una instancia del marcador que puede añadirse al mapa o encadenarse con otros métodos. 
+              </div> 
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="addToHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addToCollapse" aria-expanded="false" aria-controls="addToCollapse"> ➕ addTo(map) </button> 
+            </h2> 
+            <div id="addToCollapse" class="accordion-collapse collapse" aria-labelledby="addToHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Añade el marcador al mapa actual.<br>
+                <strong>Recibe:</strong> la instancia del mapa (<code>map</code>).<br>
+                <strong>Devuelve:</strong> el mismo marcador, lo que permite encadenar métodos. 
+              </div>
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="popupHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#popupCollapse" aria-expanded="false" aria-controls="popupCollapse"> 💬 bindPopup(contenido, opciones) </button> 
+            </h2> 
+            <div id="popupCollapse" class="accordion-collapse collapse" aria-labelledby="popupHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Asocia una ventana emergente (<em>popup</em>) al marcador.<br>
+                <strong>Recibe:</strong> el texto o HTML que se mostrará y parámetros opcionales de diseño.<br>
+                <strong>Devuelve:</strong> el marcador con el popup vinculado. 
+              </div> 
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="tooltipHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tooltipCollapse" aria-expanded="false" aria-controls="tooltipCollapse"> 🏷️ bindTooltip(contenido, opciones) </button> 
+            </h2> 
+            <div id="tooltipCollapse" class="accordion-collapse collapse" aria-labelledby="tooltipHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Crea una etiqueta flotante que aparece al pasar el cursor sobre el marcador.<br>
+                <strong>Recibe:</strong> el texto o HTML que mostrará y opciones de visualización.<br>
+                <strong>Devuelve:</strong> el marcador con el tooltip vinculado. 
+              </div> 
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="setViewHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setViewCollapse" aria-expanded="false" aria-controls="setViewCollapse"> 🎯 setView(latLng, zoom) </button> 
+            </h2> 
+            <div id="setViewCollapse" class="accordion-collapse collapse" aria-labelledby="setViewHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Centra y ajusta el nivel de zoom del mapa en una ubicación específica.<br>
+                <strong>Recibe:</strong> coordenadas (<code>[lat, lng]</code>) y el nivel de zoom.<br>
+                <strong>Devuelve:</strong> la instancia del mapa con la nueva vista aplicada. 
+              </div> 
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="popupExtraHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#popupExtraCollapse" aria-expanded="false" aria-controls="popupExtraCollapse"> 📌 popup(), setLatLng(), setContent(), openOn(map) </button> 
+            </h2> 
+            <div id="popupExtraCollapse" class="accordion-collapse collapse" aria-labelledby="popupExtraHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Métodos adicionales para manipular popups.<br>
+                <strong>popup():</strong> crea un popup vacío.<br>
+                <strong>setLatLng():</strong> cambia su posición en el mapa.<br>
+                <strong>setContent():</strong> actualiza el texto o HTML del popup.<br>
+                <strong>openOn(map):</strong> abre el popup sobre la instancia del mapa especificada. 
+              </div> 
+            </div> 
+          </div> 
+
+          <div class="accordion-item"> 
+            <h2 class="accordion-header" id="polylineHeading"> 
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#polylineCollapse" aria-expanded="false" aria-controls="polylineCollapse"> 🗺️ L.polyline(latlngs, opciones) </button> 
+            </h2> 
+            <div id="polylineCollapse" class="accordion-collapse collapse" aria-labelledby="polylineHeading" data-bs-parent="#subFuncionesMarcadores"> 
+              <div class="accordion-body"> 
+                Dibuja una línea o ruta conectando una secuencia de coordenadas en el mapa.<br>
+                <strong>Recibe:</strong> una lista de puntos <code>[[lat1, lng1], [lat2, lng2], ...]</code> y parámetros opcionales (color, grosor, opacidad, etc.).<br>
+                <strong>Devuelve:</strong> un objeto de tipo <code>Polyline</code> que puede añadirse al mapa con <code>.addTo(map)</code>. 
+              </div> 
+            </div> 
+          </div> 
+
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</div>
+
+          <!-- Comparación y ventajas -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#advantages">
+                📊 Comparación y ventajas
+              </button>
+            </h2>
+            <div id="advantages" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                <ul>
+                  <li><em>Vs Google Maps</em>: Leaflet es gratuito, flexible y sin restricciones de uso.</li>
+                  <li><em>Vs Mapbox GL JS</em>: más ligero y simple, ideal para la mayoría de proyectos web.</li>
+                  <li><em>Vs librerías pesadas</em>: menor consumo de recursos y mayor velocidad de carga.</li>
+                  <li><em>Ventaja clave</em>: gran comunidad que aporta plugins y soporte constante.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sitios que usan Leaflet -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sites">
+                🗺️ Sitios reconocidos que usan Leaflet
+              </button>
+            </h2>
+            <div id="sites" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                <ul>
+                  <li><strong>Flickr</strong>: utiliza Leaflet para mostrar mapas en fotos con geolocalización.</li>
+                  <li><strong>Foursquare</strong>: implementa Leaflet en sus productos web para mapas interactivos.</li>
+                  <li><strong>Craigslist</strong>: integra Leaflet en su plataforma de clasificados.</li>
+                  <li><strong>Cartier</strong>: su sitio de tiendas usa Leaflet para mapas de localización.</li>
+                  <li><strong>Gobiernos y servicios públicos</strong>: emplean Leaflet en portales de cartografía y datos geográficos.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Notas prácticas -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notes">
+                📝 Notas prácticas
+              </button>
+            </h2>
+            <div id="notes" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                - La <strong>geolocalización</strong> solo funciona en <em>HTTPS</em> o <em>localhost</em><br>
+                - Recuerda atribuir a <strong>OpenStreetMap</strong> al usar sus tiles<br>
+                - Leaflet es ideal para <em>demos, proyectos académicos y prototipos rápidos</em>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conclusiones -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#conclusions">
+                 Conclusiones
+              </button>
+            </h2>
+            <div id="conclusions" class="accordion-collapse collapse" data-bs-parent="#accordionInfo">
+              <div class="accordion-body">
+                Leaflet permite crear <strong>mapas interactivos</strong> de forma sencilla y flexible.  
+                Gracias a su comunidad y compatibilidad con proveedores de mapas, se convierte en una herramienta 
+                perfecta para <em>aplicaciones web modernas</em>.
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Requisitos básicos</h5>
-            <p class="card-text mb-0">Conocimientos básicos de HTML y JavaScript. Un div con id para el mapa y CSS que le dé altura.</p>
-          </div>
-        </div>
-
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">Funciones clave mostradas</h5>
-            <p class="card-text mb-0">Inicializar mapa, capas de tiles (OpenStreetMap), marcador, círculo, polígono, evento clic y geolocalización.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Notas prácticas</h5>
-            <p class="card-text mb-0">Geolocalización funciona solo en HTTPS o localhost. Atribuye OpenStreetMap si usas sus tiles.</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // ====== Inicialización del mapa ======
     const map = L.map('map').setView([4.711, -74.0721], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
+    // Capas base
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors', maxZoom: 19
     }).addTo(map);
 
-    const marker = L.marker([4.711, -74.0721]).addTo(map).bindPopup('Bogotá, D.C.').openPopup();
+    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenTopoMap'
+    });
 
-    const circle = L.circle([4.712, -74.075], { radius: 300, fillOpacity: 0.2 }).addTo(map).bindPopup('Radio 300 m');
+    const sat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution: '© Google Maps'
+    });
 
-    const polygon = L.polygon([[4.715, -74.08], [4.71, -74.07], [4.706, -74.075]]).addTo(map).bindPopup('Polígono ejemplo');
+    // Control de capas
+    L.control.layers({ "OSM": osm, "Topográfico": topo, "Satélite": sat }).addTo(map);
 
+    // Marcador principal
+    const marker = L.marker([4.711, -74.0721]).addTo(map).bindPopup('Bogotá, D.C.');
+
+    // Ruta de ejemplo
+    const ruta = L.polyline([[4.598, -74.077], [4.605, -74.056]], { color: 'red' })
+      .addTo(map).bindPopup("Ruta Plaza de Bolívar → Monserrate");
+
+    // ====== Lugares turísticos ======
+    const lugares = {
+      "Monserrate": [4.605, -74.056],
+      "Museo del Oro": [4.601, -74.072],
+      "Plaza de Bolívar": [4.598, -74.077],
+      "Parque Simón Bolívar": [4.658, -74.094]
+    };
+
+    for (let nombre in lugares) {
+      const coords = lugares[nombre];
+      L.marker(coords).addTo(map).bindPopup(nombre).bindTooltip(nombre);
+    }
+
+    // Click en lista lateral
+    document.querySelectorAll(".lugar").forEach(item => {
+      item.addEventListener("click", () => {
+        const lat = parseFloat(item.getAttribute("data-lat"));
+        const lng = parseFloat(item.getAttribute("data-lng"));
+        map.setView([lat, lng], 16);
+      });
+    });
+
+    // ====== Eventos del mapa ======
     map.on('click', function(e){
       const lat = e.latlng.lat.toFixed(5);
       const lng = e.latlng.lng.toFixed(5);
@@ -96,20 +413,30 @@ Danna Alejandra Molina Beltrán
       map.setView([4.711, -74.0721], 13);
     });
 
+    // ====== Geolocalización ======
     document.getElementById('btnLocate').addEventListener('click', function(){
       map.locate({ setView: true, maxZoom: 16 });
     });
 
+    let userMarker, userCircle;
+
     map.on('locationfound', function(e){
-      const radius = e.accuracy;
-      L.marker(e.latlng).addTo(map).bindPopup('Estás aquí').openPopup();
-      L.circle(e.latlng, radius).addTo(map);
-      document.getElementById('coordBadge').textContent = 'Lat: ' + e.latlng.lat.toFixed(5) + ' , Lng: ' + e.latlng.lng.toFixed(5);
+      if (userMarker) { map.removeLayer(userMarker); }
+      if (userCircle) { map.removeLayer(userCircle); }
+
+      userMarker = L.marker(e.latlng).addTo(map).bindPopup('Estás aquí').openPopup();
+      userCircle = L.circle(e.latlng, e.accuracy).addTo(map);
+
+      document.getElementById('coordBadge').textContent = 
+        'Lat: ' + e.latlng.lat.toFixed(5) + ' , Lng: ' + e.latlng.lng.toFixed(5);
     });
 
     map.on('locationerror', function(){
       alert('No fue posible obtener la ubicación. Revisa permisos o usa HTTPS.');
     });
+
+    // Escala
+    L.control.scale({ metric: true, imperial: false }).addTo(map);
   </script>
 </body>
 </html>
